@@ -154,8 +154,8 @@ const App = () => {
 			)}
 
 			{error && (
-				<div className='text-red-500 mb-4'>
-					<strong>Error:</strong> {error}
+				<div className='text-purple-800 mb-4'>
+					<strong>Please note:</strong> {error}
 				</div>
 			)}
 
