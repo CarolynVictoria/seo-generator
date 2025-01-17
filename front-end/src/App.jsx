@@ -111,7 +111,7 @@ const App = () => {
 
 			<div className='relative w-full max-w-3xl mb-4'>
 				<textarea
-					className='textarea w-full h-60 pr-20 pl-10 pt-10 pb-10 focus:outline-none focus:ring-0 focus:border-base-400 overflow-auto'
+					className='textarea w-full h-60 pr-20 pl-10 pt-10 pb-10 scroll-p-10 focus:outline-none focus:ring-0 focus:border-base-400 overflow-auto'
 					value={prompt}
 					onChange={handleInputChange}
 					placeholder='What content would you like to evaluate?'
