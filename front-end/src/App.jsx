@@ -190,33 +190,44 @@ const hasExcessiveRepetition = (text) => {
 
 			{responses.length > 0 && (
 				<div className='w-full max-w-3xl bg-base-100 p-10 mb-4 rounded-xl'>
-					<h2 className='text-lg font-bold mb-4'>SEO Title & Description Suggestions</h2>
+					<h2 className='text-lg font-bold mb-4'>
+						SEO Title & Description Suggestions
+					</h2>
 					<ul className='space-y-4'>
 						{responses.map((res, index) => (
-							<li key={index} className='bg-base-200 p-4 rounded-md shadow-sm'>
-								<div className='flex justify-between items-start'>
-									<div className='w-full'>
-										<h3 className='font-semibold flex justify-between items-start'>
-											{res.title}
-											<button
-												className='btn btn-xs btn-ghost ml-2'
-												onClick={() => navigator.clipboard.writeText(res.title)}
-											>
-												<MdContentCopy size={14} className='text-gray-500' />
-											</button>
-										</h3>
-										<p className='text-sm text-gray-700 flex justify-between items-start'>
-											{res.description}
-											<button
-												className='btn btn-xs btn-ghost ml-2'
-												onClick={() =>
-													navigator.clipboard.writeText(res.description)
-												}
-											>
-												<MdContentCopy size={14} className='text-gray-500' />
-											</button>
-										</p>
-									</div>
+							<li
+								key={index}
+								className='bg-base-200 p-4 rounded-md shadow-sm relative'
+							>
+								<div className='w-full'>
+									<h3 className='font-semibold'>
+										{res.title}{' '}
+										<span className='text-xs text-gray-500'>
+											({res.title.length} characters)
+										</span>
+									</h3>
+									<button
+										className='btn btn-xs btn-ghost'
+										style={{ position: 'absolute', right: '10px', top: '10px' }}
+										onClick={() => navigator.clipboard.writeText(res.title)}
+									>
+										<MdContentCopy size={14} className='text-gray-500' />
+									</button>
+									<p className='text-sm text-gray-700'>
+										{res.description}{' '}
+										<span className='text-xs text-gray-500'>
+											({res.description.length} characters)
+										</span>
+									</p>
+									<button
+										className='btn btn-xs btn-ghost'
+										style={{ position: 'absolute', right: '10px', top: '50px' }}
+										onClick={() =>
+											navigator.clipboard.writeText(res.description)
+										}
+									>
+										<MdContentCopy size={14} className='text-gray-500' />
+									</button>
 								</div>
 							</li>
 						))}
