@@ -17,25 +17,38 @@ app.use(bodyParser.json());
 
 // Routes
 app.get('/', (req, res) => {
+	console.log('GET /: Backend health check');
 	res.send('Backend API is running!');
 });
 
 app.post('/api/chat', async (req, res) => {
 	const { prompt } = req.body;
 
+	console.log('POST /api/chat: Received request with prompt:', prompt);
+
 	try {
 		// Get the response directly as an object
 		const rawResponse = await getChatGPTResponse(prompt);
+		console.log(
+			'POST /api/chat: Raw response from getChatGPTResponse:',
+			rawResponse
+		);
 
 		// Check if the response is structured correctly
 		if (rawResponse.success) {
+			console.log('POST /api/chat: Sending success response to frontend');
 			res.json(rawResponse); // Send the valid response to the frontend
 		} else {
 			// Handle specific errors from the API
+			console.error(
+				'POST /api/chat: Error in rawResponse:',
+				rawResponse.message
+			);
 			res.status(400).json({ error: rawResponse.message });
 		}
 	} catch (error) {
-		console.error('Error in /api/chat route:', error.message);
+		// Log any errors encountered during the process
+		console.error('Error in /api/chat route:', error.stack || error.message);
 		res.status(500).json({ error: 'Failed to fetch response from ChatGPT' });
 	}
 });
@@ -43,6 +56,7 @@ app.post('/api/chat', async (req, res) => {
 // Fallback for undefined API routes
 app.use((req, res, next) => {
 	if (req.path.startsWith('/api')) {
+		console.warn(`API route not found: ${req.path}`);
 		return res.status(404).json({ error: 'API route not found' });
 	}
 	next();
