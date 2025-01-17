@@ -33,7 +33,7 @@ export const getChatGPTResponse = async (prompt, website) => {
 				messages: [
 					{
 						role: 'system',
-						content: `You are an SEO metadata expert for ${website}. Generate 5 SEO-friendly titles and descriptions for the provided content. Each title must not exceed 70 characters. Each description must be between 140 and up to 190 characters. Return the output strictly as a valid JSON array of objects, with each object containing "title" and "description" keys. Do not include any additional text or formatting.`,
+						content: `You are an SEO metadata expert for ${website}. Generate 5 SEO-friendly titles and descriptions for the provided content. Each title must not exceed 68 characters. Each description must be between 140 and up to 180 characters. The content you provide must be absolutely factual. Do not enhance or overstate anything. Stick to facts. Return the output strictly as a valid JSON array of objects, with each object containing "title" and "description" keys. Do not include any additional text or formatting.`,
 					},
 					{ role: 'user', content: prompt },
 				],
