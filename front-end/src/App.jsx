@@ -25,12 +25,23 @@ const App = () => {
 		return text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
 	};
 
-	const hasExcessiveRepetition = (text) => {
-		const words = text.trim().toLowerCase().split(/\s+/);
-		const wordCount = words.length;
-		const uniqueWords = new Set(words).size;
-		return uniqueWords / wordCount < 0.5;
-	};
+const hasExcessiveRepetition = (text) => {
+	const words = text.trim().toLowerCase().split(/\s+/);
+	const repetitionThreshold = 5; // Define the threshold for excessive repetition
+	let consecutiveCount = 1;
+
+	for (let i = 1; i < words.length; i++) {
+		if (words[i] === words[i - 1]) {
+			consecutiveCount++;
+			if (consecutiveCount >= repetitionThreshold) {
+				return true;
+			}
+		} else {
+			consecutiveCount = 1;
+		}
+	}
+	return false;
+};
 
 	const handleWebsiteChange = (e) => {
 		setSelectedWebsite(e.target.value);
