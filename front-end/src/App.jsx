@@ -139,7 +139,7 @@ const hasExcessiveRepetition = (text) => {
 						className='textarea w-full h-60 pr-20 pl-10 py-10 focus:outline-none focus:ring-0 focus:border-base-400'
 						value={prompt}
 						onChange={handleInputChange}
-						placeholder='What content would you like to evaluate?'
+						placeholder='What content would you like to evaluate? (max 5000 words)'
 					/>
 					<div className='absolute top-2 right-4 text-gray-400 text-xs'>
 						{countWords(prompt)} words
