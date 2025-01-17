@@ -26,13 +26,22 @@ app.get('/api', (req, res) => {
 });
 
 app.post('/api/chat', async (req, res) => {
-	const { prompt } = req.body;
+	const { prompt, website } = req.body;
 
 	console.log('POST /api/chat: Received request with prompt:', prompt);
+	console.log('POST /api/chat: Received website:', website);
 
 	try {
+		// Validate inputs
+		if (!prompt || !website) {
+			console.error('POST /api/chat: Missing prompt or website parameter.');
+			return res
+				.status(400)
+				.json({ error: 'Prompt and website are required.' });
+		}
+
 		// Get the response directly as an object
-		const rawResponse = await getChatGPTResponse(prompt);
+		const rawResponse = await getChatGPTResponse(prompt, website);
 		console.log(
 			'POST /api/chat: Raw response from getChatGPTResponse:',
 			rawResponse
