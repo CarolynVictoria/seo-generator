@@ -43,5 +43,5 @@
 		"postcss": "^8.5.1",
 		"tailwindcss": "^3.4.17"
 	},
-	"proxy": "http://localhost:5505"
+"proxy": "https://seo-generator.onrender.com"
 }
