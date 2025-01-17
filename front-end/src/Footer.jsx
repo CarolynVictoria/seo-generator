@@ -2,7 +2,7 @@ import React from 'react';
 import { GiBrain } from 'react-icons/gi'; // Import the icon
 
 const Footer = () => (
-	<footer className='flex flex-col justify-center items-center py-4 bg-base-200 w-full border-t border-gray-800'>
+	<footer className='flex flex-col justify-center items-center py-4 bg-base-200 w-full '>
 		<div className='max-w-screen-sm w-full text-center px-4'>
 			<p className='text-xs mb-2'>
 				This app uses ChatGPT model{' '}

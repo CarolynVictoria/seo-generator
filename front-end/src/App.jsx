@@ -1,37 +1,41 @@
 import React, { useState } from 'react';
-import { MdContentCopy } from 'react-icons/md';
 import fetchChatGPTResponse from './apiService.js';
 import Header from './Header.jsx';
 import Footer from './Footer';
+import { MdContentCopy } from 'react-icons/md'; // Correct icon for copying
 
 const App = () => {
 	const [prompt, setPrompt] = useState('');
 	const [responses, setResponses] = useState([]);
+	const [selectedWebsite, setSelectedWebsite] = useState(
+		'www.insidephilanthropy.com'
+	); // Default website
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState('');
 	const [wordLimitExceeded, setWordLimitExceeded] = useState(false);
 	const [textTooShort, setTextTooShort] = useState(false);
 
-	// Utility function to count words
+	const websites = [
+		'www.insidephilanthropy.com',
+		'www.bluetent.us',
+		'www.peopleshouse.us',
+	];
+
 	const countWords = (text) => {
 		return text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
 	};
 
-	// Utility function to check for excessive repetition
 	const hasExcessiveRepetition = (text) => {
-		const words = text.trim().toLowerCase().split(/\s+/); // Split text into words
+		const words = text.trim().toLowerCase().split(/\s+/);
 		const wordCount = words.length;
-
-		if (wordCount === 0) return false; // Empty text is not repetitive
-
-		// Threshold: Block if the same word is repeated more than 5 times in a row
-		const excessiveRepetitionPattern = /\b(\w+)\b(?:\s+\1\b){4,}/i; // 5+ consecutive repetitions
-		if (excessiveRepetitionPattern.test(text)) return true;
-
-		return false; // Only care about consecutive repetition
+		const uniqueWords = new Set(words).size;
+		return uniqueWords / wordCount < 0.5;
 	};
 
-	// Handle input change
+	const handleWebsiteChange = (e) => {
+		setSelectedWebsite(e.target.value);
+	};
+
 	const handleInputChange = (e) => {
 		const text = e.target.value;
 		const wordCount = countWords(text);
@@ -40,57 +44,42 @@ const App = () => {
 		setWordLimitExceeded(wordCount > 5000);
 		setTextTooShort(wordCount < 100);
 
-		// Validate for repetitive content
 		const repetitive = hasExcessiveRepetition(text);
 		if (repetitive) {
 			setError(
 				'Your input contains too much repetition. Please make it more unique.'
 			);
 		} else {
-			setError(''); // Clear the error if validation passes
+			setError('');
 		}
 	};
 
-	// Handle form submission
 	const handleSubmit = async () => {
-		// Check for an empty prompt
 		if (!prompt.trim()) {
 			setError('Prompt cannot be empty.');
-			return; // Prevent submission if the prompt is empty
+			return;
 		}
 
-		// Prevent submission if there are other validation errors
 		if (error || wordLimitExceeded || textTooShort) {
 			return;
 		}
 
 		setLoading(true);
-		setError(''); // Clear previous errors
-		setResponses([]); // Clear previous responses
+		setError('');
+		setResponses([]);
 
 		try {
-			// Fetch the response from the API
-			const result = await fetchChatGPTResponse(prompt);
-			console.log('Received response:', result);
-
+			const result = await fetchChatGPTResponse(prompt, selectedWebsite);
 			if (result.success) {
-				setResponses(result.data); // Process successful response
+				setResponses(result.data);
 			} else {
-				// Explicitly handle backend errors
-				setError(result.error || 'An unknown error occurred.');
+				setError(result.message || 'An unknown error occurred.');
 			}
 		} catch (err) {
-			// Handle frontend or Axios-related errors
 			console.error('Error fetching response:', err);
-			if (err.response?.status === 400) {
-				setError(
-					err.response.data.error || 'Invalid request. Please check your input.'
-				);
-			} else {
-				setError('Failed to generate SEO suggestions. Please try again.');
-			}
+			setError('Failed to generate SEO suggestions. Please try again.');
 		} finally {
-			setLoading(false); // Reset loading state
+			setLoading(false);
 		}
 	};
 
@@ -105,19 +94,45 @@ const App = () => {
 	return (
 		<div className='min-h-screen bg-base-200 text-base-content flex flex-col items-center p-4'>
 			<Header />
-			<h2 className='relative w-full text-lg max-w-3xl mb-0 p-4'>
-				Your article content:
-			</h2>
+			<div className='mb-8 w-full max-w-3xl'>
+				<label
+					className='block w-full font-bold text-sm max-w-3xl p-2'
+					htmlFor='website-select'
+				>
+					Choose a site:
+				</label>
+
+				<select
+					className='select w-full focus:outline-none focus:ring-0'
+					value={selectedWebsite}
+					onChange={handleWebsiteChange}
+				>
+					{websites.map((site) => (
+						<option key={site} value={site}>
+							{site}
+						</option>
+					))}
+				</select>
+			</div>
 
 			<div className='relative w-full max-w-3xl mb-4'>
-				<textarea
-					className='textarea w-full h-60 pr-20 pl-10 pt-10 pb-10 scroll-p-10 focus:outline-none focus:ring-0 focus:border-base-400 overflow-auto'
-					value={prompt}
-					onChange={handleInputChange}
-					placeholder='What content would you like to evaluate?'
-				/>
-				<div className='absolute top-2 right-4 text-gray-400 text-xs'>
-					{countWords(prompt)} words
+				<label
+					className='block w-full font-bold text-sm max-w-3xl p-2'
+					htmlFor='article-content'
+				>
+					Paste article content:
+				</label>
+				<div className='relative'>
+					<textarea
+						id='article-content'
+						className='textarea w-full h-60 pr-20 pl-10 py-10 focus:outline-none focus:ring-0 focus:border-base-400'
+						value={prompt}
+						onChange={handleInputChange}
+						placeholder='What content would you like to evaluate?'
+					/>
+					<div className='absolute top-2 right-4 text-gray-400 text-xs'>
+						{countWords(prompt)} words
+					</div>
 				</div>
 			</div>
 
@@ -164,81 +179,40 @@ const App = () => {
 
 			{responses.length > 0 && (
 				<div className='w-full max-w-3xl bg-base-100 p-10 mb-4 rounded-xl'>
-					<div className='mb-6'>
-						<h2 className='text-lg font-bold text-blue-500 mb-2'>
-							SEO Title Suggestions
-						</h2>
-						<div className='space-y-4'>
-							{responses.map((res, index) => (
-								<div
-									key={`title-${index}`}
-									className='space-y-1 bg-base-200 p-3 rounded-md'
-								>
-									<div className='flex justify-between'>
-										<p
-											className='mr-2 flex-1'
-											style={{
-												textIndent: '-1.2em',
-												paddingLeft: '1.5em',
-											}}
-										>
-											<strong className='text-gray-500'>{index + 1}.</strong>{' '}
-											{res.title}{' '}
-											<span className='text-xs text-gray-500'>
-												({res.title.length} characters)
-											</span>
+					<h2 className='text-lg font-bold mb-4'>SEO Title & Description Suggestions</h2>
+					<ul className='space-y-4'>
+						{responses.map((res, index) => (
+							<li key={index} className='bg-base-200 p-4 rounded-md shadow-sm'>
+								<div className='flex justify-between items-start'>
+									<div className='w-full'>
+										<h3 className='font-semibold flex justify-between items-start'>
+											{res.title}
+											<button
+												className='btn btn-xs btn-ghost ml-2'
+												onClick={() => navigator.clipboard.writeText(res.title)}
+											>
+												<MdContentCopy size={14} className='text-gray-500' />
+											</button>
+										</h3>
+										<p className='text-sm text-gray-700 flex justify-between items-start'>
+											{res.description}
+											<button
+												className='btn btn-xs btn-ghost ml-2'
+												onClick={() =>
+													navigator.clipboard.writeText(res.description)
+												}
+											>
+												<MdContentCopy size={14} className='text-gray-500' />
+											</button>
 										</p>
-										<button
-											className='btn btn-xs btn-ghost self-start'
-											onClick={() => navigator.clipboard.writeText(res.title)}
-										>
-											<MdContentCopy className='text-lg' />
-										</button>
 									</div>
 								</div>
-							))}
-						</div>
-					</div>
-
-					<div>
-						<h2 className='text-lg font-bold text-blue-500 mb-2 mt-10'>
-							SEO Description Suggestions
-						</h2>
-						<div className='space-y-4'>
-							{responses.map((res, index) => (
-								<div
-									key={`description-${index}`}
-									className='space-y-1 bg-base-200 p-3 rounded-md'
-								>
-									<div className='flex justify-between'>
-										<p
-											className='mr-2 flex-1'
-											style={{
-												textIndent: '-1.2em',
-												paddingLeft: '1.5em',
-											}}
-										>
-											<strong className='text-gray-500'>{index + 1}.</strong>{' '}
-											{res.description}{' '}
-											<span className='text-xs text-gray-500'>
-												({res.description.length} characters)
-											</span>
-										</p>
-										<button
-											className='btn btn-xs btn-ghost self-start'
-											onClick={() =>
-												navigator.clipboard.writeText(res.description)
-											}
-										>
-											<MdContentCopy className='text-lg' />
-										</button>
-									</div>
-								</div>
-							))}
-						</div>
-					</div>
+							</li>
+						))}
+					</ul>
 				</div>
 			)}
+
 			<Footer />
 		</div>
 	);

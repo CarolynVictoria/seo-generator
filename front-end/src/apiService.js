@@ -1,16 +1,17 @@
 import axios from 'axios';
 
-const fetchChatGPTResponse = async (content) => {
+// Function to fetch ChatGPT responses
+const fetchChatGPTResponse = async (content, website) => {
 	try {
-		// Use a relative URL for API calls to support proxying
+		// Use a relative URL for API calls
 		const response = await axios.post('/api/chat', {
 			prompt: content,
+			website, // Include website parameter
 		});
 
-		// Directly return the processed data (JSON array) from the backend
+		// Return the processed data
 		return response.data;
 	} catch (error) {
-		// Log and rethrow error for the frontend to handle
 		console.error(
 			'Error in frontend API service:',
 			error.response?.data || error.message
