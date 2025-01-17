@@ -3,19 +3,23 @@ import { getChatGPTResponse } from './apiService.js';
 import bodyParser from 'body-parser';
 import cors from 'cors';
 import dotenv from 'dotenv';
+import path from 'path';
 
 dotenv.config();
 
 const app = express();
-app.use(express.json());
-
 const PORT = process.env.PORT || 5505;
 
 // Middleware
+app.use(express.json());
 app.use(cors());
 app.use(bodyParser.json());
 
-// Routes
+// Serve static files from the frontend build directory
+const __dirname = path.resolve();
+app.use(express.static(path.join(__dirname, '../frontend/build')));
+
+// Backend Routes
 app.get('/', (req, res) => {
 	console.log('GET /: Backend health check');
 	res.send('Backend API is running!');
@@ -60,6 +64,11 @@ app.use((req, res, next) => {
 		return res.status(404).json({ error: 'API route not found' });
 	}
 	next();
+});
+
+// Catch-all handler to serve the frontend's index.html for any route not handled by the backend
+app.get('*', (req, res) => {
+	res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
 });
 
 // Start server

@@ -17,14 +17,20 @@ const App = () => {
 		return text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
 	};
 
-	// Utility function to check for repetitive content
+	// Utility function to check for excessive repetition
 	const hasExcessiveRepetition = (text) => {
 		const words = text.trim().toLowerCase().split(/\s+/);
 		const wordCount = words.length;
-		const uniqueWords = new Set(words).size;
 
-		// Example threshold: Unique words should be at least 50% of total words
-		return uniqueWords / wordCount < 0.5;
+		// Threshold: Block if the same word is repeated more than 5 times in a row
+		const excessiveRepetitionPattern = /\b(\w+)\b(?:\s+\1\b){4,}/i; // 5+ consecutive repetitions
+		if (excessiveRepetitionPattern.test(text)) return true;
+
+		// Threshold: Unique words should be at least 50% of total words
+		const uniqueWords = new Set(words).size;
+		if (uniqueWords / wordCount < 0.5) return true;
+
+		return false;
 	};
 
 	// Handle input change
@@ -89,7 +95,6 @@ const App = () => {
 			setLoading(false); // Reset loading state
 		}
 	};
-
 
 	const handleClear = () => {
 		setPrompt('');
