@@ -25,23 +25,23 @@ const App = () => {
 		return text.trim().length > 0 ? text.trim().split(/\s+/).length : 0;
 	};
 
-const hasExcessiveRepetition = (text) => {
-	const words = text.trim().toLowerCase().split(/\s+/);
-	const repetitionThreshold = 5; // Define the threshold for excessive repetition
-	let consecutiveCount = 1;
+	const hasExcessiveRepetition = (text) => {
+		const words = text.trim().toLowerCase().split(/\s+/);
+		const repetitionThreshold = 5; // Define the threshold for excessive repetition
+		let consecutiveCount = 1;
 
-	for (let i = 1; i < words.length; i++) {
-		if (words[i] === words[i - 1]) {
-			consecutiveCount++;
-			if (consecutiveCount >= repetitionThreshold) {
-				return true;
+		for (let i = 1; i < words.length; i++) {
+			if (words[i] === words[i - 1]) {
+				consecutiveCount++;
+				if (consecutiveCount >= repetitionThreshold) {
+					return true;
+				}
+			} else {
+				consecutiveCount = 1;
 			}
-		} else {
-			consecutiveCount = 1;
 		}
-	}
-	return false;
-};
+		return false;
+	};
 
 	const handleWebsiteChange = (e) => {
 		setSelectedWebsite(e.target.value);
@@ -189,7 +189,7 @@ const hasExcessiveRepetition = (text) => {
 			)}
 
 			{responses.length > 0 && (
-				<div className='w-full max-w-3xl bg-base-100 p-10 mb-4 rounded-xl'>
+				<div className='w-full max-w-3xl bg-base-100 p-10 pt-8 mb-4 rounded-xl'>
 					<h2 className='text-lg font-bold mb-4'>
 						SEO Title & Description Suggestions
 					</h2>
@@ -197,7 +197,7 @@ const hasExcessiveRepetition = (text) => {
 						{responses.map((res, index) => (
 							<li
 								key={index}
-								className='bg-base-200 p-4 rounded-md shadow-sm relative'
+								className='bg-base-200 p-4 pr-10 rounded-md shadow-sm relative'
 							>
 								<div className='w-full'>
 									<h3 className='font-semibold'>
