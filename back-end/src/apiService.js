@@ -28,7 +28,7 @@ export const getChatGPTResponse = async (prompt) => {
 			// Return an error object instead of throwing
 			return { success: false, message: validation.error };
 		}
-
+//openai prompt and model selection will be parametarized in future build
 		const response = await axios.post(
 			'https://api.openai.com/v1/chat/completions',
 			{
