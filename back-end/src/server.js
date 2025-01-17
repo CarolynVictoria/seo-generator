@@ -40,6 +40,14 @@ app.post('/api/chat', async (req, res) => {
 	}
 });
 
+// Fallback for undefined API routes
+app.use((req, res, next) => {
+	if (req.path.startsWith('/api')) {
+		return res.status(404).json({ error: 'API route not found' });
+	}
+	next();
+});
+
 // Start server
 app.listen(PORT, () => {
 	console.log(`Server is running on http://localhost:${PORT}`);

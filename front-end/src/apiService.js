@@ -2,7 +2,8 @@ import axios from 'axios';
 
 const fetchChatGPTResponse = async (content) => {
 	try {
-		const response = await axios.post('http://localhost:5505/api/chat', {
+		// Use a relative URL for API calls to support proxying
+		const response = await axios.post('/api/chat', {
 			prompt: content,
 		});
 
