@@ -17,11 +17,11 @@ app.use(bodyParser.json());
 
 // Serve static files from the frontend build directory
 const __dirname = path.resolve();
-app.use(express.static(path.join(__dirname, '../frontend/build')));
+app.use(express.static(path.join(__dirname, '../front-end/build')));
 
 // Backend Routes
-app.get('/', (req, res) => {
-	console.log('GET /: Backend health check');
+app.get('/api', (req, res) => {
+	console.log('GET /api: Backend health check');
 	res.send('Backend API is running!');
 });
 
@@ -68,7 +68,7 @@ app.use((req, res, next) => {
 
 // Catch-all handler to serve the frontend's index.html for any route not handled by the backend
 app.get('*', (req, res) => {
-	res.sendFile(path.join(__dirname, '../frontend/build', 'index.html'));
+	res.sendFile(path.join(__dirname, '../front-end/build', 'index.html'));
 });
 
 // Start server
